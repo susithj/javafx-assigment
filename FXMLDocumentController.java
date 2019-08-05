@@ -1,86 +1,116 @@
-package validateinputs;
 
+package mymediaplayer;
+
+import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaView;
+import javafx.scene.media.MediaPlayer;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FXMLDocumentController implements Initializable {
-    
-    @FXML private Label label;
-    @FXML private TextField Txtstid;
-    @FXML private TextField Txtmcode;
-    @FXML private TextField Txtclassroom;
-    @FXML private TextField Txtemial;
-    @FXML private TextField Txtpostcode;
-    
-    @FXML private Label Stidout;
-    @FXML private Label Mcodeout;
-    @FXML private Label MClassOut;
-    @FXML private Label Emailout;
-    @FXML private Label Pcodeout;
-    
-    public void ClearLabels(){  
-      
-      Stidout.setText("");
-      Mcodeout.setText("");
-      MClassOut.setText("");
-      Emailout.setText("");
-      Pcodeout.setText("");
-      }
+    @FXML Slider VolBar;
+    @FXML  private MediaView MDv;
+    private MediaPlayer MP1;
+    private Media Mda;
+    @FXML private Button Search;
+    @FXML private Button Load;
+    @FXML private ListView ListBox;
     
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-       
-        ClearLabels();
     
-            String StNo = Txtstid.getText().toString();
-            String MoCode = Txtmcode.getText().toString();
-            String RomNo = Txtclassroom.getText().toString(); 
-            String Eml=Txtemial.getText().toString();
-            String PCode=Txtpostcode.getText().toString();
-
-       
-        Student std = new Student();
-    
-String status =   std.Validate(StNo, MoCode, RomNo, Eml, PCode);
-
-if(status == "valid")
-{ 
-        ArrayList<String> StdDetails = std.GetStdDetails (StNo, MoCode, RomNo, Eml, PCode);  
-     
-      Stidout.setText((StdDetails.get(0)));
-      Mcodeout.setText((StdDetails.get(1)));
-      MClassOut.setText((StdDetails.get(2)));
-      Emailout.setText((StdDetails.get(3)));
-      Pcodeout.setText((StdDetails.get(4)));
-           
-} 
-
-else {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informarion Dialog");
-        alert.setHeaderText("Validation Errors Detected");
-        alert.setContentText("Please fix Validation Errors before continuing");
-        alert.showAndWait();
-}    
-    
-    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+       //String path = new File("src/Media/CT001.mp4").getAbsolutePath(); 
+       String path = new File("d:\\Video\\CT002.mp4").getAbsolutePath();
+       //String path = new File("src/Media/ & ListBox. ).getAbsolutePath(); 
+       Mda=new Media(new File(path).toURI().toString());
+       MP1=new MediaPlayer(Mda);
+       //MDv.setFitHeight(1200);
+       //MDv.setFitWidth(600);
+       MDv.setMediaPlayer(MP1);
+       //MP1.setAutoPlay(true); 
+       DoubleProperty width= MDv.fitWidthProperty();
+       DoubleProperty height= MDv.fitHeightProperty();
+       width.bind(Bindings.selectDouble(MDv.sceneProperty(),"widht"));
+       height.bind(Bindings.selectDouble(MDv.sceneProperty(),"height"));
+       VolBar.setValue(MP1.getVolume()*100);
+       VolBar.valueProperty().addListener(new InvalidationListner(){
+
+            @Override
+            public void invalidated(Observable observable) {
+            MP1.setVolume(VolBar.getValue() /100);
+       }
+           
+       });     
+               
     }    
     
+    public void play(ActionEvent event) {
+        MP1.play();
+    }
+    public void pause(ActionEvent event) {
+        MP1.pause();
+    }
+    public void Fast(ActionEvent event) {
+        MP1.setRate(4);
+    }
+    public void Slow(ActionEvent event) {
+        MP1.setRate(.5);
+    }
+    public void Reload(ActionEvent event) {
+        MP1.seek(MP1.getStartTime());
+        MP1.play();
+    }
+    public void Start(ActionEvent event) {
+        MP1.seek(MP1.getStartTime());
+        MP1.stop();
+    }
+    public void Last(ActionEvent event) {
+        MP1.seek(MP1.getTotalDuration());
+        MP1.stop();
+    }
+    public void Search(ActionEvent event) {
+        FileChooser FC1 = new FileChooser();
+        //File selectedFile= FC1.showOpenDialog(null);
+        FC1.setInitialDirectory(new File ("D:\\Video"));
+        File selectedFile= FC1.showOpenDialog(null);
+        FC1.getExtensionFilters().addAll(
+                new ExtensionFilter("MP4 Files", "*.mp4"));
+        
+        if (selectedFile != null){
+           ListBox.getItems().add(selectedFile.getName());
+        }else{
+            System.out.println("Invalied File");
+    } 
+    }
+    public void Load(ActionEvent event) {
+    FileChooser FC1 = new FileChooser();
+    FC1.setInitialDirectory(new File ("D:\\Video"));
+    FC1.getExtensionFilters().addAll(
+            new ExtensionFilter("Video Files", "*.mp4"));
+    File selectedFile = FC1.showOpenDialog(null);
+            if(selectedFile != null) {
+                MP1.play();
+                }
+
+    else {
+        System.out.println("file is not valid");
+    }
+
+}
 }

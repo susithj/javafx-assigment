@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.media.MediaView?>
 
-<AnchorPane id="AnchorPane" prefHeight="282.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="validateinputs.FXMLDocumentController">
-    <children>
-        <Button fx:id="button" layoutX="256.0" layoutY="217.0" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="69.0" text="Validate" />
-        <Label fx:id="label" layoutX="254.0" layoutY="242.0" minHeight="16" minWidth="69" />
-      <Label layoutX="37.0" layoutY="34.0" prefHeight="17.0" prefWidth="65.0" text="Student No" />
-      <Label layoutX="37.0" layoutY="68.0" prefHeight="17.0" prefWidth="141.0" text="Computer Module Code" />
-      <Label layoutX="37.0" layoutY="104.0" prefHeight="17.0" prefWidth="108.0" text="Class Room No" />
-      <Label layoutX="37.0" layoutY="139.0" prefHeight="17.0" prefWidth="94.0" text="E mail Address" />
-      <Label layoutX="37.0" layoutY="173.0" prefHeight="17.0" prefWidth="108.0" text="UK Post Code" />
-      <TextField fx:id="Txtstid" layoutX="180.0" layoutY="30.0" />
-      <TextField fx:id="Txtmcode" layoutX="180.0" layoutY="64.0" />
-      <TextField fx:id="Txtclassroom" layoutX="180.0" layoutY="100.0" />
-      <TextField fx:id="Txtemial" layoutX="180.0" layoutY="135.0" />
-      <TextField fx:id="Txtpostcode" layoutX="180.0" layoutY="169.0" />
-      <Label fx:id="Stidout" layoutX="383.0" layoutY="34.0" prefHeight="17.0" prefWidth="123.0" text="Label" />
-      <Label fx:id="Mcodeout" layoutX="383.0" layoutY="68.0" prefHeight="17.0" prefWidth="141.0" text="Label" />
-      <Label fx:id="MClassOut" layoutX="383.0" layoutY="104.0" text="Label" />
-      <Label fx:id="Emailout" layoutX="383.0" layoutY="139.0" prefHeight="17.0" prefWidth="180.0" text="Label" />
-      <Label fx:id="Pcodeout" layoutX="383.0" layoutY="173.0" prefHeight="17.0" prefWidth="123.0" text="Label" />
-    </children>
-</AnchorPane>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="627.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mymediaplayer.FXMLDocumentController">
+   <center>
+      <MediaView fx:id="MDv" fitHeight="200.0" fitWidth="200.0" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <HBox prefHeight="59.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#play" text="Play" />
+            <Button mnemonicParsing="false" onAction="#pause" text="Pause" />
+            <Button mnemonicParsing="false" onAction="#Fast" text="Fast" />
+            <Button mnemonicParsing="false" onAction="#Slow" text="Slow" />
+            <Button mnemonicParsing="false" onAction="#Reload" text="Reload" />
+            <Button mnemonicParsing="false" onAction="#Start" text="Start" />
+            <Button mnemonicParsing="false" onAction="#Last" text="Last" />
+            <Slider fx:id="VolBar" />
+            <Button fx:id="Search" mnemonicParsing="false" onAction="#Search" prefHeight="25.0" prefWidth="48.0" text="Find" />
+            <ListView fx:id="ListBox" prefHeight="59.0" prefWidth="95.0" />
+            <Button fx:id="Load" mnemonicParsing="false" onAction="#Load" text="Load" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
