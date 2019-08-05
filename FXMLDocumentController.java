@@ -1,109 +1,142 @@
+package extaxgui;
 
-package weatherinfoapi;
-
+import com.restfb.Connection;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
+import javafx.scene.control.Label;
+import com.restfb.types.Post;
+import com.restfb.types.User;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL; 
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import org.json.JSONException;
 import org.json.JSONObject;
-
+import com.restfb.*;
+import com.restfb.FacebookClient;
+import com.restfb.FacebookClient.AccessToken;
+/**
+ *
+ * @author admin
+ */
 public class FXMLDocumentController implements Initializable {
     
-    @FXML private Label cityout;
-    @FXML private TextField city;
-    @FXML private TextField ccode;
-    @FXML private Label tempout;
-    @FXML private Label humidityout;
-    @FXML private Label mintempout;
-    @FXML private Label pressureout;
-    @FXML private Label lblsunrise;
-    @FXML private Label mintempout1;
-    @FXML private Label cloud;
-    @FXML private Label wspeed;
+    
+    @FXML private Label TUser;
+    @FXML private Label TSex;
+    @FXML private Label TDob;
+    @FXML private Label THometown;
+    @FXML private TableView<Messages> resulttable;
+    @FXML private TableColumn<Messages, String> message;
+    @FXML private TableColumn<Messages, String> posttime;
+    
+        ObservableList<Messages> msg = FXCollections.observableArrayList();
+
     
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-                
-        try{
-        
-        String entered_city = city.getText().toString();
-        String entered_ccode = ccode.getText().toString();
-        
-        String url = "https://api.openweathermap.org/data/2.5/weather?q="+entered_city+","+entered_ccode+"&units=metric&appid=cee8b1b6a77337d75639251f291d7b3c";     
-       //cee8b1b6a77337d75639251f291d7b3c   
-       //cityout.setText(url);
-    
-           
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        int responseAPI = con.getResponseCode();
-        System.out.println("\nSending 'GET'  request to URL " + url);
-        System.out.println("Respons Code "  + responseAPI);
-        BufferedReader in = new BufferedReader ( new InputStreamReader(con.getInputStream()));
-        
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-        while((inputLine = in.readLine()) != null)
-        {
-        response.append(inputLine);
-        }
-           
-        JSONObject MyRes1 = new JSONObject(response.toString());
-        //        System.out.println(MyRes1);
-        JSONObject main = new JSONObject(MyRes1.getJSONObject("main").toString());
-                
-                double temperature = main.getDouble("temp");
-                int humidity = main.getInt("humidity");
-                double mintemp = main.getDouble("temp_min");
-                double maxtemp =main.getDouble("temp_max");
-                int pressure = main.getInt("pressure");
-               
-            tempout.setText(String.valueOf(temperature));
-            humidityout.setText(String.valueOf(humidity));
-            mintempout.setText(String.valueOf(mintemp));
-            mintempout1.setText(String.valueOf(maxtemp));
-            pressureout.setText(String.valueOf(pressure));
-                //My Response 2        
-        JSONObject MyRes2 = new JSONObject(response.toString());
-        // System.out.println(MyRes2);
-        JSONObject sys = new JSONObject(MyRes2.getJSONObject("sys").toString());
-                int sunrise =sys.getInt("sunrise");
-                lblsunrise.setText(String.valueOf(sunrise));
-                //My Response 3        
-        JSONObject MyRes3 = new JSONObject(response.toString());
-        //System.out.println(MyRes3);
-        JSONObject clouds = new JSONObject(MyRes3.getJSONObject("clouds").toString());
-                int all =clouds.getInt("all");
-                cloud.setText(String.valueOf(all));
+    private void handleButtonAction(ActionEvent event)  {
 
-        //My Response 4        
-        JSONObject MyRes4 = new JSONObject(response.toString());
-        // System.out.println(MyRes4);
-        JSONObject wind = new JSONObject(MyRes3.getJSONObject("wind").toString());
+ // String Token2 = "EAAFktlFY5f0BACzU1RzdZCWTRbXrRq0z1BmzOVFKbg170KDfvUQwKTWSuVkrcS8DgjulMrbOZAqpPUEtds9kWZAX4LKwIhZChx01cCscSRlZAm3zxC4sCvfYBAF5AQAqPZAAS1KT4lLtOHw4iZBtbWU7mZBAAHwp4ZC2ogtS4NhPLpAZDZD";   // page access token      
+  String Token  ="EAAFktlFY5f0BAM2TK4OgZBJMPlgi58ygJ91H3c8ZBSKLB4RBVVKJHpi3S7g8sVMlPZCYfLJPsZCEj2rsoVfyzhdjLY4bxrv4jFaLvDtfU4y165DylIvSLTVb6V4JfTcg3PuhEmvbwagNtHeO6b82maRlhRrdwKT35AF6ajk6AHGFChG9FgZC6nOFBBoWlZATlfJaecAjOheQZDZD"; // USer access token
 
-                int speed =wind.getInt("speed");
-                wspeed.setText(String.valueOf(speed));
-         }
-        catch (Exception e)
+  FacebookClient fb = new com.restfb.DefaultFacebookClient(Token);
+
+  //FacebookClient fbp = new com.restfb.DefaultFacebookClient(Token2);
+
+
+//FacebookType response = fbp.publish("102822324406123/feed", FacebookType.class, Parameter.with("message","susith send this"));
+      
+        Connection<Post> result = fb.fetchConnection("me/feed", Post.class);
+        ArrayList<String> repos = new ArrayList(); 
+        repos.add("Data will go from this point");
+        
+        String time;
+        String mes;
+        
+        for (List<Post> page : result)
         {
-        System.out.println(e);
+        for (Post aPost : page){
+        mes = aPost.getMessage();
+        time = aPost.getCreatedTime().toString();
+         if (mes == null)
+            {
+            mes = "EMPTY";
+            
+            }
+        repos.add(mes);
+        repos.add(time);
         }
-         
+        }
+        for (int i = 1;  i < repos.size(); i = i + 2)
+        {
+            int a, b;
+            
+            a = i;
+            b = i+1;
+      System.out.println(repos.get(a) + "  " + repos.get(b));
+        }
+        resulttable.setItems(getMessages(repos));
     }
+    
+    public ObservableList<Messages> getMessages(ArrayList <String> prdata)
+    {
+
+       msg = FXCollections.observableArrayList(); 
+        
+           for(int j = 1; j < prdata.size(); j = j + 2)
+           {
+               int a, b;
+               a = j;
+               b = j+1;
+               
+               System.out.println(prdata.get(a) + "  " + prdata.get(b));
+               msg.add(new Messages(prdata.get(a), prdata.get(b)));
+               
+           } 
+    
+        return msg;
+    
+}
+    
+    @FXML
+    private void Btn(ActionEvent event)  {
+    
+        //String Token2 = "EAAFktlFY5f0BACzU1RzdZCWTRbXrRq0z1BmzOVFKbg170KDfvUQwKTWSuVkrcS8DgjulMrbOZAqpPUEtds9kWZAX4LKwIhZChx01cCscSRlZAm3zxC4sCvfYBAF5AQAqPZAAS1KT4lLtOHw4iZBtbWU7mZBAAHwp4ZC2ogtS4NhPLpAZDZD";   // page access token      
+            //String Token  ="EAAFktlFY5f0BAM2TK4OgZBJMPlgi58ygJ91H3c8ZBSKLB4RBVVKJHpi3S7g8sVMlPZCYfLJPsZCEj2rsoVfyzhdjLY4bxrv4jFaLvDtfU4y165DylIvSLTVb6V4JfTcg3PuhEmvbwagNtHeO6b82maRlhRrdwKT35AF6ajk6AHGFChG9FgZC6nOFBBoWlZATlfJaecAjOheQZDZD"; // USer access token
+
+            //FacebookClient fb = new com.restfb.DefaultFacebookClient(Token);
+
+
+        //FacebookType response = fb.publish("102822324406123/feed", FacebookType.class, Parameter.with("message","susith send this"));
+
+        String TK1  ="EAAFktlFY5f0BAFsKmRmoWFdTuyoPJkWVVp7JkytA5liE3xBq4zcfMwUOoPZB26zfDTe8LScBVgco7qc6vngCUZAFZALWyZB3MdedKnga5nOsbkpulb9KR1lISOvoWZCkyovihLMUrptLfDtLVBQhlcbqZC2tTErwYrepbq56FBYwZDZD";
+        FacebookClient MyFB = new com.restfb.DefaultFacebookClient(TK1);
+
+         
+        User me = MyFB.fetchObject("me", User.class, Parameter.with("fields", "name,email,gender,birthday,hometown")); 
+
+
+                TUser.setText(me.getName());
+                TSex.setText(me.getGender());
+                TDob.setText(me.getBirthday());
+                THometown.setText(me.getHometownName());
+        //System.out.println("........");
+    }    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-     
-                // TODO
+    message.setCellValueFactory(new PropertyValueFactory<Messages, String>("message"));
+    posttime.setCellValueFactory(new PropertyValueFactory<Messages, String>("ttime"));
     }    
     
 }
