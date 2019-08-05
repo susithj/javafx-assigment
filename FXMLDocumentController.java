@@ -1,154 +1,109 @@
-package studentrecords;
+
+package weatherinfoapi;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
 
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.ObservableList;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL; 
+import org.json.JSONObject;
 
 public class FXMLDocumentController implements Initializable {
     
-    @FXML
-    private Label label;
-    
-    
-    @FXML private TextField Stnumber;
-    @FXML private TextField Stname;
-    @FXML private TextField stcouse;
-    @FXML private TextField stage;
-    
-    @FXML private TableView<Student> tableView;
-    @FXML private TableColumn<Student, String> TStdNo;
-    @FXML private TableColumn<Student, String> TStdName;
-    @FXML private TableColumn<Student, String> TStdCos;
-    @FXML private TableColumn<Student, String> TStdage;
-    
-    ObservableList<Student> std = FXCollections.observableArrayList();
+    @FXML private Label cityout;
+    @FXML private TextField city;
+    @FXML private TextField ccode;
+    @FXML private Label tempout;
+    @FXML private Label humidityout;
+    @FXML private Label mintempout;
+    @FXML private Label pressureout;
+    @FXML private Label lblsunrise;
+    @FXML private Label mintempout1;
+    @FXML private Label cloud;
+    @FXML private Label wspeed;
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
-      //  System.out.println("You clicked me!");
-      //  label.setText("Hello World!");
-        String S2= Stname.getText().toString();
-        String S1=Stnumber.getText().toString();
-        String S3 =stcouse.getText().toString();
-        String S4 =stage.getText().toString();
+                
+        try{
         
-        Student std = new Student();
+        String entered_city = city.getText().toString();
+        String entered_ccode = ccode.getText().toString();
         
-        String status =   std.Validate(S1, S2);
-        String dbstatus;
-        DBCon db = new DBCon();
-        dbstatus = db.MakeDbConnection();
-    String test;
+        String url = "https://api.openweathermap.org/data/2.5/weather?q="+entered_city+","+entered_ccode+"&units=metric&appid=cee8b1b6a77337d75639251f291d7b3c";     
+       //cee8b1b6a77337d75639251f291d7b3c   
+       //cityout.setText(url);
     
-        if(status == "valid" && dbstatus == "valid")
-{ 
-             
-      Student stdcon =   new Student(S1,S2, S3,S4);
-      
-      String Studentno = stdcon.getStNo();
-      String Studentname = stdcon.getStName();
-      String Studentcos = stdcon.getStCos();
-      String Studentage = stdcon.getStAge();
-
-      test =    db.InsertData(Studentno, Studentname, Studentcos,Studentage);
-
-  if ( test == "valid")
-  {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informarion Dialog");
-        alert.setHeaderText("Success");
-        alert.setContentText("Data Entered Success");
-        alert.showAndWait();
+           
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        int responseAPI = con.getResponseCode();
+        System.out.println("\nSending 'GET'  request to URL " + url);
+        System.out.println("Respons Code "  + responseAPI);
+        BufferedReader in = new BufferedReader ( new InputStreamReader(con.getInputStream()));
         
-        ClearTableView(); 
-  }
-  
-  else {
-  
-  Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informarion Dialog");
-        alert.setHeaderText(" Database Errors Detected");
-        alert.setContentText("You Entered existing Student Number");
-        alert.showAndWait();
-  }
-      
-}   
-  else {
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while((inputLine = in.readLine()) != null)
+        {
+        response.append(inputLine);
+        }
+           
+        JSONObject MyRes1 = new JSONObject(response.toString());
+        //        System.out.println(MyRes1);
+        JSONObject main = new JSONObject(MyRes1.getJSONObject("main").toString());
+                
+                double temperature = main.getDouble("temp");
+                int humidity = main.getInt("humidity");
+                double mintemp = main.getDouble("temp_min");
+                double maxtemp =main.getDouble("temp_max");
+                int pressure = main.getInt("pressure");
+               
+            tempout.setText(String.valueOf(temperature));
+            humidityout.setText(String.valueOf(humidity));
+            mintempout.setText(String.valueOf(mintemp));
+            mintempout1.setText(String.valueOf(maxtemp));
+            pressureout.setText(String.valueOf(pressure));
+                //My Response 2        
+        JSONObject MyRes2 = new JSONObject(response.toString());
+        // System.out.println(MyRes2);
+        JSONObject sys = new JSONObject(MyRes2.getJSONObject("sys").toString());
+                int sunrise =sys.getInt("sunrise");
+                lblsunrise.setText(String.valueOf(sunrise));
+                //My Response 3        
+        JSONObject MyRes3 = new JSONObject(response.toString());
+        //System.out.println(MyRes3);
+        JSONObject clouds = new JSONObject(MyRes3.getJSONObject("clouds").toString());
+                int all =clouds.getInt("all");
+                cloud.setText(String.valueOf(all));
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informarion Dialog");
-        alert.setHeaderText(" Errors Detected");
-        alert.setContentText("Please fix Validation or Database Errors before continuing");
-        alert.showAndWait();
-}
-    
+        //My Response 4        
+        JSONObject MyRes4 = new JSONObject(response.toString());
+        // System.out.println(MyRes4);
+        JSONObject wind = new JSONObject(MyRes3.getJSONObject("wind").toString());
+
+                int speed =wind.getInt("speed");
+                wspeed.setText(String.valueOf(speed));
+         }
+        catch (Exception e)
+        {
+        System.out.println(e);
+        }
+         
     }
-     @FXML
-    private void ClearTableView() 
-        {
-            
-        std.removeAll(std);
-
-        }
-    
-    
-    @FXML
-    private void ListStudent(ActionEvent event) 
-        {
-            ArrayList <String> tr = new ArrayList<String>();
-            DBCon df = new DBCon();
-            tr =   df.ViewStudent();
-            tableView.setItems(getStudent(tr));
-        }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    
-  
-    TStdNo.setCellValueFactory(new PropertyValueFactory<Student,String>("StdNo"));
-    TStdName.setCellValueFactory(new PropertyValueFactory<Student, String>("StdName"));
-    TStdCos.setCellValueFactory(new PropertyValueFactory<Student, String>("StdCos"));
-    TStdage.setCellValueFactory(new PropertyValueFactory<Student, String>("StdAge"));
-    
+     
+                // TODO
     }    
     
-    public ObservableList<Student> getStudent(ArrayList <String> dbdata)
-    {
-
-       std = FXCollections.observableArrayList(); 
-       int RowCount = dbdata.size()/4;
-        
-       
-           for(int j = 0; j < dbdata.size(); j = j + 4)
-           {
-               int a, b, c, d;
-               a = j;
-               b = j+1;
-               c = j+2;
-               d = j+3;
-               
-              //  std.add(new Student(dbdata.get(a)));
-               std.add(new Student(dbdata.get(a),dbdata.get(b),dbdata.get(c),dbdata.get(d)));
-               
-           } 
-   
-        return std;
-    }
 }

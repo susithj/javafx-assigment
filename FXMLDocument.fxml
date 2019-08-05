@@ -2,28 +2,83 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="403.0" prefWidth="568.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="studentrecords.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="373.0" prefWidth="1020.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weatherinfoapi.FXMLDocumentController">
     <children>
-        <Button fx:id="button" layoutX="284.0" layoutY="78.0" onAction="#handleButtonAction" text="Submit" />
-        <Label fx:id="label" layoutX="125.0" layoutY="114.0" minHeight="16" minWidth="69" />
-      <TextField fx:id="Stnumber" layoutX="112.0" layoutY="14.0" promptText="Student No" />
-      <TextField fx:id="Stname" layoutX="112.0" layoutY="46.0" promptText="Student Name" />
-      <TextField fx:id="stcouse" layoutX="112.0" layoutY="78.0" promptText="Course" />
-      <TableView fx:id="tableView" layoutX="42.0" layoutY="149.0" prefHeight="220.0" prefWidth="502.0">
-        <columns>
-          <TableColumn fx:id="TStdNo" prefWidth="76.0" text="Student No" />
-          <TableColumn fx:id="TStdName" prefWidth="185.0" text="Student Name" />
-            <TableColumn fx:id="TStdCos" minWidth="8.0" prefWidth="107.0" text="Course No" />
-            <TableColumn fx:id="TStdage" minWidth="8.0" prefWidth="107.0" text="Age" />
-        </columns>
-      </TableView>
-      <Button layoutX="387.0" layoutY="78.0" mnemonicParsing="false" onAction="#ListStudent" prefHeight="25.0" prefWidth="88.0" text="Student Lists" />
-      <TextField fx:id="stage" layoutX="112.0" layoutY="110.0" promptText="Age" />
-      <Label layoutX="284.0" layoutY="18.0" prefHeight="17.0" prefWidth="114.0" text="Ex - ST001" />
+        <Button fx:id="button" layoutX="145.0" layoutY="110.0" onAction="#handleButtonAction" prefHeight="25.0" prefWidth="149.0" text="Check Weather" />
+      <Label layoutX="40.0" layoutY="73.0" prefHeight="17.0" prefWidth="44.0" text="City" />
+      <Label layoutX="40.0" layoutY="32.0" text="Country Code" />
+      <TextField fx:id="city" layoutX="145.0" layoutY="69.0" onAction="#handleButtonAction" promptText="COLOMBO" text="Colombo" />
+      <TextField fx:id="ccode" layoutX="145.0" layoutY="28.0" onAction="#handleButtonAction" promptText="LK" text="LK" />
+      <Label fx:id="cityout" layoutX="145.0" layoutY="167.0" prefHeight="20.0" prefWidth="149.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Label layoutX="31.0" layoutY="238.0" prefHeight="17.0" prefWidth="80.0" text="Temperature" />
+      <Label fx:id="tempout" layoutX="140.0" layoutY="238.0">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="31.0" layoutY="272.0" prefHeight="17.0" prefWidth="58.0" text="Humidity" />
+      <Label fx:id="humidityout" layoutX="140.0" layoutY="272.0">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="189.0" layoutY="213.0" prefHeight="20.0" prefWidth="99.0" text="Minmum Temp">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Label fx:id="mintempout" layoutX="231.0" layoutY="237.0" prefHeight="20.0" prefWidth="58.0" text="A">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="31.0" layoutY="304.0" prefHeight="17.0" prefWidth="80.0" text="Pressure" />
+      <Label fx:id="pressureout" layoutX="138.0" layoutY="305.0" prefHeight="20.0" prefWidth="99.0" text="B">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblsunrise" layoutX="441.0" layoutY="325.0" prefHeight="17.0" prefWidth="120.0" text="Label">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="326.0" layoutY="32.0" prefHeight="17.0" prefWidth="215.0" text="Ex - Sri Lanka 'LK', India 'IN'" />
+      <Label layoutX="326.0" layoutY="73.0" prefHeight="17.0" prefWidth="187.0" text="Ex -Colombo , Delhi" />
+      <Label layoutX="310.0" layoutY="213.0" prefHeight="20.0" prefWidth="108.0" text="Maximum Temp">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Label fx:id="mintempout1" layoutX="349.0" layoutY="237.0" prefHeight="20.0" prefWidth="58.0" text="C">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="cloud" layoutX="481.0" layoutY="237.0" prefHeight="20.0" prefWidth="80.0" text="D">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label contentDisplay="CENTER" layoutX="461.0" layoutY="213.0" prefHeight="20.0" prefWidth="99.0" text="Cloud Status" textAlignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label contentDisplay="CENTER" layoutX="461.0" layoutY="262.0" prefHeight="20.0" prefWidth="99.0" text="Wind speed" textAlignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="wspeed" layoutX="481.0" layoutY="294.0" prefHeight="20.0" prefWidth="80.0" text="D">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>
