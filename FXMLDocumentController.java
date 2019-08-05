@@ -1,116 +1,154 @@
+package studentrecords;
 
-package mymediaplayer;
-
-import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaView;
-import javafx.scene.media.MediaPlayer;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.collections.ObservableList;
 
 public class FXMLDocumentController implements Initializable {
-    @FXML Slider VolBar;
-    @FXML  private MediaView MDv;
-    private MediaPlayer MP1;
-    private Media Mda;
-    @FXML private Button Search;
-    @FXML private Button Load;
-    @FXML private ListView ListBox;
     
     @FXML
+    private Label label;
     
+    
+    @FXML private TextField Stnumber;
+    @FXML private TextField Stname;
+    @FXML private TextField stcouse;
+    @FXML private TextField stage;
+    
+    @FXML private TableView<Student> tableView;
+    @FXML private TableColumn<Student, String> TStdNo;
+    @FXML private TableColumn<Student, String> TStdName;
+    @FXML private TableColumn<Student, String> TStdCos;
+    @FXML private TableColumn<Student, String> TStdage;
+    
+    ObservableList<Student> std = FXCollections.observableArrayList();
+    
+    @FXML
+    private void handleButtonAction(ActionEvent event) {
+      //  System.out.println("You clicked me!");
+      //  label.setText("Hello World!");
+        String S2= Stname.getText().toString();
+        String S1=Stnumber.getText().toString();
+        String S3 =stcouse.getText().toString();
+        String S4 =stage.getText().toString();
+        
+        Student std = new Student();
+        
+        String status =   std.Validate(S1, S2);
+        String dbstatus;
+        DBCon db = new DBCon();
+        dbstatus = db.MakeDbConnection();
+    String test;
+    
+        if(status == "valid" && dbstatus == "valid")
+{ 
+             
+      Student stdcon =   new Student(S1,S2, S3,S4);
+      
+      String Studentno = stdcon.getStNo();
+      String Studentname = stdcon.getStName();
+      String Studentcos = stdcon.getStCos();
+      String Studentage = stdcon.getStAge();
+
+      test =    db.InsertData(Studentno, Studentname, Studentcos,Studentage);
+
+  if ( test == "valid")
+  {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Informarion Dialog");
+        alert.setHeaderText("Success");
+        alert.setContentText("Data Entered Success");
+        alert.showAndWait();
+        
+        ClearTableView(); 
+  }
+  
+  else {
+  
+  Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Informarion Dialog");
+        alert.setHeaderText(" Database Errors Detected");
+        alert.setContentText("You Entered existing Student Number");
+        alert.showAndWait();
+  }
+      
+}   
+  else {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Informarion Dialog");
+        alert.setHeaderText(" Errors Detected");
+        alert.setContentText("Please fix Validation or Database Errors before continuing");
+        alert.showAndWait();
+}
+    
+    }
+     @FXML
+    private void ClearTableView() 
+        {
+            
+        std.removeAll(std);
+
+        }
+    
+    
+    @FXML
+    private void ListStudent(ActionEvent event) 
+        {
+            ArrayList <String> tr = new ArrayList<String>();
+            DBCon df = new DBCon();
+            tr =   df.ViewStudent();
+            tableView.setItems(getStudent(tr));
+        }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-       //String path = new File("src/Media/CT001.mp4").getAbsolutePath(); 
-       String path = new File("d:\\Video\\CT002.mp4").getAbsolutePath();
-       //String path = new File("src/Media/ & ListBox. ).getAbsolutePath(); 
-       Mda=new Media(new File(path).toURI().toString());
-       MP1=new MediaPlayer(Mda);
-       //MDv.setFitHeight(1200);
-       //MDv.setFitWidth(600);
-       MDv.setMediaPlayer(MP1);
-       //MP1.setAutoPlay(true); 
-       DoubleProperty width= MDv.fitWidthProperty();
-       DoubleProperty height= MDv.fitHeightProperty();
-       width.bind(Bindings.selectDouble(MDv.sceneProperty(),"widht"));
-       height.bind(Bindings.selectDouble(MDv.sceneProperty(),"height"));
-       VolBar.setValue(MP1.getVolume()*100);
-       VolBar.valueProperty().addListener(new InvalidationListner(){
-
-            @Override
-            public void invalidated(Observable observable) {
-            MP1.setVolume(VolBar.getValue() /100);
-       }
-           
-       });     
-               
+    
+  
+    TStdNo.setCellValueFactory(new PropertyValueFactory<Student,String>("StdNo"));
+    TStdName.setCellValueFactory(new PropertyValueFactory<Student, String>("StdName"));
+    TStdCos.setCellValueFactory(new PropertyValueFactory<Student, String>("StdCos"));
+    TStdage.setCellValueFactory(new PropertyValueFactory<Student, String>("StdAge"));
+    
     }    
     
-    public void play(ActionEvent event) {
-        MP1.play();
-    }
-    public void pause(ActionEvent event) {
-        MP1.pause();
-    }
-    public void Fast(ActionEvent event) {
-        MP1.setRate(4);
-    }
-    public void Slow(ActionEvent event) {
-        MP1.setRate(.5);
-    }
-    public void Reload(ActionEvent event) {
-        MP1.seek(MP1.getStartTime());
-        MP1.play();
-    }
-    public void Start(ActionEvent event) {
-        MP1.seek(MP1.getStartTime());
-        MP1.stop();
-    }
-    public void Last(ActionEvent event) {
-        MP1.seek(MP1.getTotalDuration());
-        MP1.stop();
-    }
-    public void Search(ActionEvent event) {
-        FileChooser FC1 = new FileChooser();
-        //File selectedFile= FC1.showOpenDialog(null);
-        FC1.setInitialDirectory(new File ("D:\\Video"));
-        File selectedFile= FC1.showOpenDialog(null);
-        FC1.getExtensionFilters().addAll(
-                new ExtensionFilter("MP4 Files", "*.mp4"));
+    public ObservableList<Student> getStudent(ArrayList <String> dbdata)
+    {
+
+       std = FXCollections.observableArrayList(); 
+       int RowCount = dbdata.size()/4;
         
-        if (selectedFile != null){
-           ListBox.getItems().add(selectedFile.getName());
-        }else{
-            System.out.println("Invalied File");
-    } 
+       
+           for(int j = 0; j < dbdata.size(); j = j + 4)
+           {
+               int a, b, c, d;
+               a = j;
+               b = j+1;
+               c = j+2;
+               d = j+3;
+               
+              //  std.add(new Student(dbdata.get(a)));
+               std.add(new Student(dbdata.get(a),dbdata.get(b),dbdata.get(c),dbdata.get(d)));
+               
+           } 
+   
+        return std;
     }
-    public void Load(ActionEvent event) {
-    FileChooser FC1 = new FileChooser();
-    FC1.setInitialDirectory(new File ("D:\\Video"));
-    FC1.getExtensionFilters().addAll(
-            new ExtensionFilter("Video Files", "*.mp4"));
-    File selectedFile = FC1.showOpenDialog(null);
-            if(selectedFile != null) {
-                MP1.play();
-                }
-
-    else {
-        System.out.println("file is not valid");
-    }
-
-}
 }
